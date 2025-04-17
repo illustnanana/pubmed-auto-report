@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install requests
           pip install googletrans==4.0.0-rc1
 
       - name: Run PubMed Script
