@@ -1,0 +1,30 @@
+name: PubMed Weekly Update
+
+on:
+  schedule:
+    - cron: "0 1 * * 1"  # 毎週月曜10:00（JST）に実行
+  workflow_dispatch:  # 手動実行も可能にする
+
+jobs:
+  pubmed-update:
+    runs-on: ubuntu-latest
+
+    env:
+      SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+      SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+      RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install googletrans==4.0.0-rc1
+
+      - name: Run PubMed Script
+        run: python second.pubmed_file.py
