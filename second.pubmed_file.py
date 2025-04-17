@@ -3,6 +3,27 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 import time
+import smtplib
+from email.mime.text import MIMEText
+import os
+
+def send_email(subject, body):
+    sender_email = os.environ.get("SENDER_EMAIL")
+    sender_password = os.environ.get("SENDER_PASSWORD")
+    receiver_email = os.environ.get("RECEIVER_EMAIL")
+
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, receiver_email, msg.as_string())
+        print("✅ メール送信成功")
+    except Exception as e:
+        print("❌ メール送信エラー:", e)
 
 # 翻訳ライブラリ
 try:
@@ -129,24 +150,4 @@ def job_send_pubmed_updates():
 if __name__ == "__main__":
     job_send_pubmed_updates()
 
-import smtplib
-from email.mime.text import MIMEText
-import os
 
-def send_email(subject, body):
-    sender_email = os.environ.get("SENDER_EMAIL")
-    sender_password = os.environ.get("SENDER_PASSWORD")
-    receiver_email = os.environ.get("RECEIVER_EMAIL")
-
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
-
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, receiver_email, msg.as_string())
-        print("✅ メール送信成功")
-    except Exception as e:
-        print("❌ メール送信エラー:", e)
